@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Call</title>
+    <link rel="stylesheet" href="http://localhost:3006/ux/ux.css">
+    <script src="https://jte.mehfi.us/src/jte.js" defer></script>
+    <script src="https://speedj.mehfi.us/src/speedj.js" data-production-domain="mehfi.us" defer></script>
+    <script src="https://cdn.socket.io/4.8.1/socket.io.min.js" defer></script>
+    <script src="/js/videocall.js" type="module" defer></script>
+    <script src="/js/dialog_handler.js" defer></script>
+    <style>
+        :root {
+
+            --input-background: #3c3939;
+            --input-background-container: transparent;
+            --background:#181717;
+            --container-color-label:#aaa;
+            --container-color-item:#aaa;
+            --description-color:#000;        
+            
+            --dialog-button-color:#ffffff;
+            --dialog-button-background-color:#934545;
+            --dialog-button-border-color:#c3595e;            
+            --dialog-background-color:#111111;
+            --dialog-border-color:#222222;   
+
+            --aside-button-color:#ffffff;
+            --aside-button-background-color:#934545;
+            --aside-button-border-color:#c3595e;            
+            --aside-background-color:#111111;
+            --aside-border-color:#222222;     
+
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <category>
+            <button id="start-call-button">Abrir Chamada</button>
+        </category>
+    </header>
+</body>
+</html>
