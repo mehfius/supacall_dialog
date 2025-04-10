@@ -1,0 +1,14 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+
+const element_exmaple = jte({
+    tag: 'element_name',
+    class: 'container',
+    textnode: 'Hello World',
+    onclick: () => alert('Clicked!')
+});
+
+Nunca comente o codigo

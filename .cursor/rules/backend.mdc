@@ -1,0 +1,84 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+const { Server } = require('socket.io'); // Adicione esta linha
+
+const EVENT_CONNECTION = 'connection';
+const EVENT_CALL = 'call';
+const EVENT_OFFER = 'offer';
+const EVENT_ANSWER = 'answer';
+const EVENT_CANDIDATE = 'candidate';
+const EVENT_DISCONNECT_USER = 'disconnect-user';
+const EVENT_DISCONNECT = 'disconnect';
+
+class SocketService {
+  constructor(http) {
+    this.init(http);
+  }
+
+  init(http) {
+    this.io = new Server(http, {
+      cors: {
+        origin: "*",
+        methods: ["GET", "POST"]
+      }
+    });
+
+    this.io.on(EVENT_CONNECTION, (socket) => {
+      const room = socket.handshake.query.room;
+      const query = socket.handshake.query;
+
+      if (!room) {
+        socket.disconnect();
+      } else {
+        console.log(`\x1b[32m${query.user} joined the room ${query.room_name}\x1b[0m`);
+        socket.join(room);
+        
+        // Notificar a sala inteira (incluindo o próprio usuário)
+        this.io.to(room).emit(EVENT_CALL, { id: socket.id, query });
+
+        socket.on(EVENT_OFFER, (data) => { // Removido o parâmetro query
+          console.log(`${socket.id} offering ${data.id}`);
+          socket.to(data.id).emit(EVENT_OFFER, {
+            id: socket.id,
+            offer: data.offer,
+            data: query // Usa o query do handshake
+          });
+        });
+
+        socket.on(EVENT_ANSWER, (data) => {
+          console.log(`${socket.id} answering ${data.id}`);
+          socket.to(data.id).emit(EVENT_ANSWER, {
+            id: socket.id,
+            answer: data.answer,
+            data: query
+          });
+        });
+
+        socket.on(EVENT_CANDIDATE, (data) => {
+          console.log(`${socket.id} sending a candidate to ${data.id}`);
+          socket.to(data.id).emit(EVENT_CANDIDATE, {
+            id: socket.id,
+            candidate: data.candidate,
+            data: query
+          });
+        });
+
+        socket.on(EVENT_DISCONNECT, () => {
+          console.log(`\x1b[35m${query.user} disconnected\x1b[0m`);
+          // Emitir para a sala inteira
+          this.io.to(room).emit(EVENT_DISCONNECT_USER, {
+            id: socket.id,
+            data: query
+          });
+        });
+      }
+    });
+  }
+}
+
+module.exports = (http) => {
+  return new SocketService(http);
+};
